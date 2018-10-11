@@ -59,9 +59,10 @@ type Exported struct {
 	// Exactly what it will contain varies depending on the Exporter being used.
 	Config *packages.Config
 
-	temp    string
-	primary string
-	written map[string]map[string]string
+	temp    string                       // the temporary directory that was exported to
+	primary string                       // the first non GOROOT module that was exported
+	written map[string]map[string]string // the full set of exported files
+	markers *Markers                     // The set of markers extracted from go source files
 }
 
 // Exporter implementations are responsible for converting from the generic description of some
@@ -235,4 +236,22 @@ func (e *Exported) File(module, fragment string) string {
 		return m[fragment]
 	}
 	return ""
+}
+
+// Markers returns the set of all markers in the exported files.
+func (e *Exported) Markers() (*Markers, error) {
+	if e.markers == nil {
+		e.markers = &Markers{}
+		for _, module := range e.written {
+			for _, filename := range module {
+				if !strings.HasSuffix(filename, ".go") {
+					continue
+				}
+				if err := e.markers.Extract(filename, nil); err != nil {
+					return nil, fmt.Errorf("Failed to extract markers: %v", err)
+				}
+			}
+		}
+	}
+	return e.markers, nil
 }
