@@ -210,8 +210,8 @@ func (s *Server) CodeLensResolve(context.Context, *protocol.CodeLens) (*protocol
 	return nil, notImplemented("CodeLensResolve")
 }
 
-func (s *Server) DocumentLink(context.Context, *protocol.DocumentLinkParams) ([]protocol.DocumentLink, error) {
-	return nil, nil // ignore
+func (s *Server) DocumentLink(ctx context.Context, params *protocol.DocumentLinkParams) ([]protocol.DocumentLink, error) {
+	return s.documentLink(ctx, params)
 }
 
 func (s *Server) DocumentLinkResolve(context.Context, *protocol.DocumentLink) (*protocol.DocumentLink, error) {
