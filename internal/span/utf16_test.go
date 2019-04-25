@@ -311,6 +311,9 @@ func TestFromUTF16(t *testing.T) {
 
 func getPrePost(content []byte, offset int) (string, string) {
 	pre, post := string(content)[:offset], string(content)[offset:]
+	if strings.HasPrefix(pre, post) {
+		pre = pre[len(post):]
+	}
 	if i := strings.LastIndex(pre, "\n"); i >= 0 {
 		pre = pre[i+1:]
 	}

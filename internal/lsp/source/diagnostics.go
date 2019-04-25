@@ -34,6 +34,7 @@ import (
 	"golang.org/x/tools/go/analysis/passes/unusedresult"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/internal/span"
+	"honnef.co/go/tools/staticcheck"
 )
 
 type Diagnostic struct {
@@ -201,6 +202,9 @@ func runAnalyses(ctx context.Context, v View, pkg Package, report func(a *analys
 		unreachable.Analyzer,
 		unsafeptr.Analyzer,
 		unusedresult.Analyzer,
+	}
+	for _, a := range staticcheck.Analyzers {
+		analyzers = append(analyzers, a)
 	}
 
 	roots, err := analyze(ctx, v, []Package{pkg}, analyzers)
